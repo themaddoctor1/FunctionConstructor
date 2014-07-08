@@ -22,7 +22,7 @@ public class FunctionBuilder {
     public static void main(String[] args) {
         loadTrigFunctions();
         
-        int observed = 7;
+        int observed = 6;
         int desiredCycles;
         
         Scanner in = new Scanner(System.in);
@@ -63,7 +63,7 @@ public class FunctionBuilder {
                     equation = " " + equation;
                 }
                 //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
-                System.out.println("Created on cycle " + (i+1) + " after " + (i - offset + initialSize)/10.0 + " seconds of runtime: " + equation);
+                System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
                 //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
             } catch(Exception e){
                 offset++;
