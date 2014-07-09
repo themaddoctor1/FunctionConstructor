@@ -22,7 +22,7 @@ public class FunctionBuilder {
     public static void main(String[] args) {
         loadTrigFunctions();
         
-        int observed = 6;
+        int observed;
         int desiredCycles;
         
         Scanner in = new Scanner(System.in);
@@ -37,17 +37,28 @@ public class FunctionBuilder {
             desiredCycles = in.nextInt();
         }
         
+        System.out.print("Input an index that is non-negative and less than " + functions.size() + ": ");
+        
+        observed = in.nextInt();
+        
+        while(observed < 0 || observed >= functions.size()){
+            System.err.println("ERROR: Invalid input!");
+            System.out.print("Input an index greater than 0 and less than " + functions.size() + ": ");
+            
+            observed = in.nextInt();
+        }
         
         
-        System.out.println("Initial function: " + functions.get(observed));
+        
+        System.out.println("Observed function: " + functions.get(observed));
         System.out.println();
-        System.out.println("Given equivalent functions: ");
+        System.out.println("Known before: ");
         for(Function equal : functions)
             for(Function e : equal.getEquivalents())
                 System.out.println(e + " = " + equal);
         System.out.println();
         
-        System.out.println("New functions:");
+        System.out.println("Learning Log:");
         
         int offset = 0;
         int initialSize = functions.get(observed).getEquivalents().size();
@@ -65,7 +76,7 @@ public class FunctionBuilder {
                 //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
                 System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
                 //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
-                //functions.add(newEquivalent);
+                functions.add(newEquivalent);
             } catch(Exception e){
                 offset++;
             }
@@ -80,6 +91,13 @@ public class FunctionBuilder {
             System.out.println("The program created " + newFunctions + " new functions using the given data.");
         else
             System.out.println("The program didn't create any new functions using the given data.");
+        
+        System.out.println();
+        
+        System.out.println("Known after: ");
+        for(Function f : functions)
+            for(Function related : f.getEquivalents())
+                System.out.println(related + " = " + f);
         
         
     }

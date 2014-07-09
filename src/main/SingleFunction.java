@@ -60,13 +60,13 @@ public class SingleFunction extends Function{
             Function equivalent = this.getEquivalent();
             if(!equivalent.toString().equals(this.toString()))
                 return equivalent.getEquivalent();
-            else/*
+            else
                 for(Function f : FunctionBuilder.getFunctionList()){
                     for(Function fun : f.getEquivalents()){
                         if(fun.toString().equals(this.toString()))
                             return fun;
                     }
-                }*/
+                }
             return this;
         } catch(Exception e){
             return this;
