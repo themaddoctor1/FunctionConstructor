@@ -84,9 +84,8 @@ public class Fraction extends Function{
     @Override
     public Function buildRandomEquivalent(){
         double option = (Math.random() * 2.0);
-        boolean up = (option >= 1);
         Function result;
-        if(up){
+        if(option == 0){
             Function num;
             if(numerator.size() > 1)
                 num = new CombinedFunction(numerator).buildRandomEquivalent();

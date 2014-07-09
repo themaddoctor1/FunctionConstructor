@@ -28,6 +28,24 @@ public class Product extends CombinedFunction{
     
     @Override
     public Function buildRandomEquivalent(){
-        return new Product(super.buildRandomEquivalent().getValues());
+        int choice = (int)(2 * Math.random());
+        
+        ArrayList<Function> newValues = super.buildRandomEquivalent().getValues();
+        
+        //Combines like functions with this one
+        for(int i = newValues.size() - 1; i >= 0; i++){
+            Function f = newValues.get(i);
+            if(f.getClass().equals(this.getClass())){
+                newValues.addAll(((Product) f).values);
+                newValues.remove(f);
+            }
+        }
+        
+        Product result;
+        
+        result = new Product(newValues);
+        
+        return result;
+        
     }
 }
