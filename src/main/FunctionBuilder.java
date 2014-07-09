@@ -22,98 +22,117 @@ public class FunctionBuilder {
     public static void main(String[] args) {
         loadTrigFunctions();
         
-        int observed;
-        int desiredCycles;
+        System.out.println("Welcome to the Function Constructor!");
         
-        Scanner in = new Scanner(System.in);
-        System.out.print("Input a number of cycles greater than zero: ");
-        
-           desiredCycles = in.nextInt();
-        
-        while(desiredCycles <= 0){
-            System.err.println("ERROR: Invalid input!");
+        while(true){
+            
+            System.out.println();
+            
+            int observed;
+            int desiredCycles;
+
+            Scanner in = new Scanner(System.in);
             System.out.print("Input a number of cycles greater than zero: ");
-            
-            desiredCycles = in.nextInt();
-        }
-        
-        System.out.print("Input an index that is non-negative and less than " + functions.size() + ": ");
-        
-        observed = in.nextInt();
-        
-        while(observed < 0 || observed >= functions.size()){
-            System.err.println("ERROR: Invalid input!");
-            System.out.print("Input an index greater than 0 and less than " + functions.size() + ": ");
-            
+
+               desiredCycles = in.nextInt();
+
+            while(desiredCycles <= 0){
+                System.err.println("ERROR: Invalid input!");
+                System.out.print("Input a number of cycles greater than zero: ");
+
+                desiredCycles = in.nextInt();
+            }
+
+            System.out.print("Input an index that is non-negative and less than " + functions.size() + ": ");
+
             observed = in.nextInt();
-        }
-        
-        
-        
-        System.out.println("Observed function: " + functions.get(observed));
-        System.out.println();
-        int initialRelations = 0;
-        System.out.println("Known before: ");
-        for(Function equal : functions)
-            for(Function e : equal.getEquivalents()){
-                System.out.println(e + " = " + equal);
-                initialRelations++;
+
+            while(observed < 0 || observed >= functions.size()){
+                System.err.println("ERROR: Invalid input!");
+                System.out.print("Input an index greater than 0 and less than " + functions.size() + ": ");
+
+                observed = in.nextInt();
             }
-        System.out.println();
-        
-        System.out.println("Learning Log:");
-        
-        int offset = 0;
-        int initialSize = functions.get(observed).getEquivalents().size();
-        long startTime = System.currentTimeMillis();
-        for(int i = 0; i < desiredCycles; i++){
-            Function newEquivalent = (functions.get(observed).buildRandomEquivalent());
-            functions.get(observed).addEquivalent(newEquivalent);
-            try {
-                String equation = (functions.get(observed).getEquivalents().get(i - offset + initialSize)).toString();
-                if(i+1 < 10){
-                    equation = "  " + equation;
-                } else if(i+1 < 100){
-                    equation = " " + equation;
+            
+            System.out.println();
+            
+            System.out.println("Observed function: " + functions.get(observed));
+            System.out.println();
+            int initialRelations = 0;
+            System.out.println("Known before: ");
+            for(Function equal : functions)
+                for(Function e : equal.getEquivalents()){
+                    System.out.println(equal + " = " + e);
+                    initialRelations++;
                 }
-                //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
-                System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
-                //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
-                functions.add(newEquivalent);
-            } catch(Exception e){
-                offset++;
+            System.out.println();
+
+            System.out.println("Learning Log:");
+
+            int offset = 0;
+            int initialSize = functions.get(observed).getEquivalents().size();
+            long startTime = System.currentTimeMillis();
+            for(int i = 0; i < desiredCycles; i++){
+                Function newEquivalent = (functions.get(observed).buildRandomEquivalent());
+                functions.get(observed).addEquivalent(newEquivalent);
+                try {
+                    String equation = (functions.get(observed).getEquivalents().get(i - offset + initialSize)).toString();
+                    if(i+1 < 10){
+                        equation = "  " + equation;
+                    } else if(i+1 < 100){
+                        equation = " " + equation;
+                    }
+                    //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
+                    System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
+                    //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
+                    functions.add(newEquivalent);
+                } catch(Exception e){
+                    offset++;
+                }
             }
+
+
+            System.out.println();
+
+            int finalRelations = 0;
+
+            System.out.println("Known after: ");
+            for(Function f : functions)
+                for(Function related : f.getEquivalents()){
+                    System.out.println(f + " = " + related);
+                    finalRelations++;
+                }
+
+            System.out.println();
+
+            if((finalRelations - initialRelations) > 0)
+                System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
+            else
+                System.out.println("The program didn't learn any new relations using the given data.");
+            
+            int newFunctions = (functions.get(observed).getEquivalents().size() - initialSize);
+            
+            System.out.println();
+            
+            if(newFunctions > 0)
+                System.out.println("The program created " + newFunctions + " new functions using the given data.");
+            else
+                System.out.println("The program didn't create any new functions using the given data.");
+            
+            
+            System.out.println();
+            System.out.print("Run again?(1 to continue): ");
+            
+            if(in.nextInt() != 1){
+                System.out.println();
+                System.out.println("Thanks for using the Function Constructor!");
+                System.exit(0);
+            } else {
+                System.out.println();
+                System.out.println("Running again...");
+            }
+
         }
-        
-        
-        System.out.println();
-        
-        int newFunctions = (functions.get(observed).getEquivalents().size() - initialSize);
-        
-        if(newFunctions > 0)
-            System.out.println("The program created " + newFunctions + " new functions using the given data.");
-        else
-            System.out.println("The program didn't create any new functions using the given data.");
-        
-        System.out.println();
-        
-        int finalRelations = 0;
-        
-        System.out.println("Known after: ");
-        for(Function f : functions)
-            for(Function related : f.getEquivalents()){
-                System.out.println(related + " = " + f);
-                finalRelations++;
-            }
-        
-        System.out.println();
-        
-        if((finalRelations - initialRelations) > 0)
-            System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
-        else
-            System.out.println("The program didn't learn any new relations using the given data.");
-        
-        
     }
     
     /**
@@ -164,6 +183,22 @@ public class FunctionBuilder {
         ArrayList<Function> sincos2 = new ArrayList<>();
         sincos2.add(sineSquare); sincos2.add(cosineSquare);
         ONE.addEquivalent(new CombinedFunction(sincos2));
+        
+        //Negative Trig Functions
+        
+        
+        ArrayList<Function> negVals = new ArrayList<>(); negVals.add(new Value(-1)); negVals.add(X);
+        Product negPar = new Product(negVals);
+        //    cos(-x) = cos(x)
+        cos.addEquivalent(new SingleFunction("cos", negPar));
+        //    cos(x) = 1/sec(-x)
+        cos.addEquivalent(new Fraction(ONE, new SingleFunction("sec", negPar)));
+        //    sin(x) = -sin(-x)
+        ArrayList<Function> negSin = new ArrayList<Function>(); negSin.add(new Value(-1)); negSin.add(new SingleFunction("sin", negPar));
+        sin.addEquivalent(new Product(negSin));
+        //    sin(x) = -1/csc(-x)
+        sin.addEquivalent(new Fraction(new Value(-1), new SingleFunction("csc", negPar)));
+        
         
         
         list.add(sin);

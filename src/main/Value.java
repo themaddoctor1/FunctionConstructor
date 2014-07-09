@@ -36,10 +36,22 @@ public class Value extends Function {
     public Function buildRandomEquivalent(){
         try{
             Function equiv = getEquivalent();
+            
+            if(value instanceof Integer){
+                int number = (Integer) value;
+                if(number < 0){
+                    ArrayList<Function> product = new ArrayList<>();
+                    product.add(new Value(-1));
+                    product.add(new Value(-1 * number));
+                    
+                    return new Product(product); 
+                }
+            }
             if(equiv != this)
                 return equiv.buildRandomEquivalent();
-            return this;
-        } catch(NullPointerException n){
+            else
+                return this;
+        } catch(Exception n){
             return this;
         }
     }

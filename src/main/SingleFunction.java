@@ -56,21 +56,25 @@ public class SingleFunction extends Function{
 
     @Override
     public Function buildRandomEquivalent() {
+        Function result = null;
         try{
             Function equivalent = this.getEquivalent();
-            if(!equivalent.toString().equals(this.toString()))
-                return equivalent.getEquivalent();
-            else
+            if(!equivalent.toString().equals(this.toString())){
+                result = equivalent.buildRandomEquivalent();
+            } else
                 for(Function f : FunctionBuilder.getFunctionList()){
                     for(Function fun : f.getEquivalents()){
                         if(fun.toString().equals(this.toString()))
-                            return fun;
+                            result = fun;
                     }
                 }
-            return this;
+            if(result == null)
+                result = this;
         } catch(Exception e){
-            return this;
+            result = this;
         }
+        return result;
+        
     }
 
     @Override
