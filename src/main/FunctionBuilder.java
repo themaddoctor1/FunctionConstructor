@@ -52,10 +52,13 @@ public class FunctionBuilder {
         
         System.out.println("Observed function: " + functions.get(observed));
         System.out.println();
+        int initialRelations = 0;
         System.out.println("Known before: ");
         for(Function equal : functions)
-            for(Function e : equal.getEquivalents())
+            for(Function e : equal.getEquivalents()){
                 System.out.println(e + " = " + equal);
+                initialRelations++;
+            }
         System.out.println();
         
         System.out.println("Learning Log:");
@@ -94,10 +97,21 @@ public class FunctionBuilder {
         
         System.out.println();
         
+        int finalRelations = 0;
+        
         System.out.println("Known after: ");
         for(Function f : functions)
-            for(Function related : f.getEquivalents())
+            for(Function related : f.getEquivalents()){
                 System.out.println(related + " = " + f);
+                finalRelations++;
+            }
+        
+        System.out.println();
+        
+        if((finalRelations - initialRelations) > 0)
+            System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
+        else
+            System.out.println("The program didn't learn any new relations using the given data.");
         
         
     }
