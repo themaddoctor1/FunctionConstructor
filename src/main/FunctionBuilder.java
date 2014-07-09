@@ -65,6 +65,7 @@ public class FunctionBuilder {
                 //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
                 System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
                 //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
+                //functions.add(newEquivalent);
             } catch(Exception e){
                 offset++;
             }

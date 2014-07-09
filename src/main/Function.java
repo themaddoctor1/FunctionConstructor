@@ -64,6 +64,10 @@ public abstract class Function {
         try{
             return getEquivalent((int)(equivalents.size() * Math.random()));
         } catch (Exception e){
+            for(Function foreign : FunctionBuilder.getFunctionList())
+                for(Function f : foreign.getEquivalents())
+                    if(f.toString().equals(toString()))
+                        return f;
             return this;
         }
     }

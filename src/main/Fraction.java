@@ -87,17 +87,17 @@ public class Fraction extends Function{
         Function result;
         if(option == 0){
             Function num;
-            if(numerator.size() > 1)
+            //if(numerator.size() > 1)
                 num = new CombinedFunction(numerator).buildRandomEquivalent();
-            else
-                num = numerator.get(0);
+            //else
+            //    num = numerator.get(0).buildRandomEquivalent();
             result = new Fraction(num, denominator);
         } else {
             Function den;
-            if(denominator.size() > 1)
+            //if(denominator.size() > 1)
                 den = new CombinedFunction(denominator).buildRandomEquivalent();
-            else
-                den = denominator.get(0).buildRandomEquivalent();
+            //else
+            //    den = denominator.get(0).buildRandomEquivalent();
             result = new Fraction(numerator, den);
         }
         
