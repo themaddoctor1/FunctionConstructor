@@ -60,7 +60,10 @@ public class SingleFunction extends Function{
         try{
             Function equivalent = this.getEquivalent();
             if(!equivalent.toString().equals(this.toString())){
-                result = equivalent.buildRandomEquivalent();
+                if(Math.random() * 2.0 > 1)
+                    result = equivalent.buildRandomEquivalent();
+                else
+                    result = equivalent;
             } else
                 for(Function f : FunctionBuilder.getFunctionList()){
                     for(Function fun : f.getEquivalents()){
