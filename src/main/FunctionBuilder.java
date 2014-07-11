@@ -59,6 +59,8 @@ public class FunctionBuilder {
                 } else if(pieces.get(0).equals("run")){
                     if(pieces.get(1).equals("learning_cycle"))
                         prepareLearningFunction();
+                    else if(pieces.get(1).equals("multi_learning_cycle"))
+                        prepareMultiLearningFunction();
                     else
                         System.out.println("That process was not recognized. Try another query.");
                 } else if(pieces.get(0).equals("reset")){
@@ -97,7 +99,7 @@ public class FunctionBuilder {
                         System.out.println("Available options:\n    memory - Contains every function it is currently storing. Does not\n             include loadable function packages.");
                     } else if(pieces.get(1).equals("run")){
                         System.out.println("Runs the requested process if it is available.");
-                        System.out.println("Available processes:\n    learning_cycle - Runs the cycle program that is used to create new functions");
+                        System.out.println("Available processes:\n    learning_cycle - Runs the cycle program that is used to create new functions\n    multi_learning_cycle - Repeats the learning_cycle function multiple times for each known function");
                     } else if(pieces.get(1).equals("exit") || pieces.get(1).equals("quit")){
                         System.out.println("Exits the program.");
                     } else
@@ -118,6 +120,89 @@ public class FunctionBuilder {
         tryToAddFunctions(getTrigonometricFunctions());
         System.out.println("Loaded Trigonometric Functions");
     }
+    
+    
+    public static void prepareMultiLearningFunction(){
+        int cycles;
+        int subCycles;
+        
+        Scanner in = new Scanner(System.in);
+        System.out.print("Input a number of cycles greater than zero: ");
+
+           cycles = in.nextInt();
+
+        while(cycles <= 0){
+            System.err.println("ERROR: Invalid input!");
+            System.out.print("Input a number of cycles greater than zero: ");
+
+            cycles = in.nextInt();
+        }
+        
+        System.out.print("Input a number of cycles per item that is greater than zero: ");
+
+           subCycles = in.nextInt();
+
+        while(cycles <= 0){
+            System.err.println("ERROR: Invalid input!");
+            System.out.print("Input a number of cycles per item that is greater than zero: ");
+
+            subCycles = in.nextInt();
+        }
+        
+        
+        int initialRelations = 0, initialSize = functions.size();
+        
+        System.out.println();
+        System.out.println("Known before: ");
+        for(Function equal : functions)
+            for(Function e : equal.getEquivalents()){
+                System.out.println(equal + " = " + e);
+                initialRelations++;
+            }
+        
+        System.out.println("\nCycle Log:");
+        
+        for(int i = 0; i < cycles; i++){
+            System.out.println("  Cycle " + (i+1));
+            for(int index = 0; index < initialSize; index++){
+                System.out.println("    Observing index " + index + ": " + functions.get(index));
+                executeLearningFunction(index, subCycles, false);
+            }
+            System.out.println();
+        }
+        
+        
+        int finalRelations = 0;
+        
+        //Counts the number of functions and stores the new ones
+        System.out.println("Known after: ");
+        for(int i = 0; i < functions.size(); i++){
+            Function f = functions.get(i);
+            for(Function related : f.getEquivalents()){
+                System.out.println(f + " = " + related);
+                finalRelations++;
+                tryToAddFunction(related);
+            }
+        }
+        
+        System.out.println();
+
+        if((finalRelations - initialRelations) > 0)
+            System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
+        else
+            System.out.println("The program didn't learn any new relations using the given data.");
+
+        int newFunctions = (functions.size() - initialSize);
+
+        if(newFunctions > 0)
+            System.out.println("Using the data available, " + newFunctions + " new functions were successfully created and stored.");
+        else
+            System.out.println("The program didn't create any new functions using the given data.");
+        
+        
+    }
+    
+    
     
     /**
      * A user interface method that accesses the executeLearningFunction method
@@ -160,24 +245,27 @@ public class FunctionBuilder {
 
         System.out.println();
 
-        executeLearningFunction(observed, desiredCycles);
+        executeLearningFunction(observed, desiredCycles, true);
     }
     
-    public static void executeLearningFunction(int observed, int desiredCycles){
-
-        System.out.println("Observed function: " + functions.get(observed));
-        System.out.println();
+    public static void executeLearningFunction(int observed, int desiredCycles, boolean showData){
+        
         int initialRelations = 0;
-        System.out.println("Known before: ");
-        for(Function equal : functions)
-            for(Function e : equal.getEquivalents()){
-                System.out.println(equal + " = " + e);
-                initialRelations++;
-            }
-        System.out.println();
+        
+        if(showData){
+            System.out.println("Observed function: " + functions.get(observed));
+            System.out.println();
+            System.out.println("Known before: ");
+            for(Function equal : functions)
+                for(Function e : equal.getEquivalents()){
+                    System.out.println(equal + " = " + e);
+                    initialRelations++;
+                }
+            System.out.println();
 
-        System.out.println("Learning Log:");
-
+            System.out.println("Learning Log:");
+            
+        }
         int offset = 0;
         int initialSize = functions.get(observed).getEquivalents().size();
         long startTime = System.currentTimeMillis();
@@ -191,8 +279,10 @@ public class FunctionBuilder {
                 } else if(i+1 < 100){
                     equation = " " + equation;
                 }
-                //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
-                System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
+                if(showData){
+                    //The division by 10.0 is based on my computer's run speed. The reccomended value may fluctuate.
+                    System.out.println("Created on cycle " + (i+1) + " after " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds of runtime: " + equation);
+                }
                 //System.out.println((System.currentTimeMillis() - startTime) + "," + (i - offset + initialSize));
                 functions.add(newEquivalent);
             } catch(Exception e){
@@ -200,35 +290,37 @@ public class FunctionBuilder {
             }
         }
 
-
+        if(showData){
+            
         System.out.println();
 
         int finalRelations = 0;
         
-        //Counts the number of functions and stores the new ones
-        System.out.println("Known after: ");
-        for(int i = 0; i < functions.size(); i++){
-            Function f = functions.get(i);
-            for(Function related : f.getEquivalents()){
-                System.out.println(f + " = " + related);
-                finalRelations++;
-                tryToAddFunction(related);
+            //Counts the number of functions and stores the new ones
+            System.out.println("Known after: ");
+            for(int i = 0; i < functions.size(); i++){
+                Function f = functions.get(i);
+                for(Function related : f.getEquivalents()){
+                    System.out.println(f + " = " + related);
+                    finalRelations++;
+                    tryToAddFunction(related);
+                }
             }
+            System.out.println();
+
+            if((finalRelations - initialRelations) > 0)
+                System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
+            else
+                System.out.println("The program didn't learn any new relations using the given data.");
+
+            int newFunctions = (functions.get(observed).getEquivalents().size() - initialSize);
+
+            if(newFunctions > 0)
+                System.out.println("Using the data available, " + newFunctions + " new functions were successfully created and stored.");
+            else
+                System.out.println("The program didn't create any new functions using the given data.");
+        
         }
-        System.out.println();
-
-        if((finalRelations - initialRelations) > 0)
-            System.out.println("The program learned " + (finalRelations - initialRelations) + " new relations using the given data.");
-        else
-            System.out.println("The program didn't learn any new relations using the given data.");
-
-        int newFunctions = (functions.get(observed).getEquivalents().size() - initialSize);
-
-        if(newFunctions > 0)
-            System.out.println("Using the data available, " + newFunctions + " new functions were successfully created and stored.");
-        else
-            System.out.println("The program didn't create any new functions using the given data.");
-            
             
     }
 
